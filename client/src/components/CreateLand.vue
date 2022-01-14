@@ -1,7 +1,7 @@
 <template>
   <div class="w-full max-w-screen-md mx-auto py-8 px-3">
     <div class="flex flex-col mb-3" v-for="field in fields" :key="field.code">
-      <label class="mb-2 font-bold text-red-900" :for="field.code">{{
+      <label class="mb-2 font-bold text-green-900" :for="field.code">{{
         field.label
       }}</label>
       <input
@@ -9,21 +9,21 @@
         class="border border-gray-200 p-2 rounded"
         type="text"
         :id="field.code"
-        v-model="newPizza[field.code]"
+        v-model="newLand[field.code]"
       />
       <input
         v-if="field.type == 'number'"
         class="border border-gray-200 p-2 rounded"
         type="number"
         :id="field.code"
-        v-model="newPizza[field.code]"
+        v-model="newLand[field.code]"
       />
       <select
         v-if="field.type == 'select'"
         class="border border-gray-200 p-2 rounded bg-white"
         :name="field.code"
         :id="field.code"
-        v-model="newPizza[field.code]"
+        v-model="newLand[field.code]"
       >
         <option
           v-for="option in field.options"
@@ -33,23 +33,22 @@
           {{ option.label }}
         </option>
       </select>
-      <textarea
-        v-if="field.type == 'textarea'"
-        v-model="newPizza[field.code]"
-        class="border border-gray-200 p-2 rounded bg-white"
+      <input
+        v-if="field.type == 'checkbox'"
+        class="border border-gray-200 p-2 rounded"
+        type="checkbox"
         :id="field.code"
-        cols="30"
-        rows="10"
-      >
-      </textarea>
+        v-model="newLand[field.code]"
+      />
+      
     </div>
     <div class="pt-3">
       <button
-        @click="createPizza()"
+        @click="createLand()"
         :disabled="!formIsValid"
-        class="disabled:bg-gray-300 disabled:cursor-not-allowed p-2 px-3 rounded bg-red-800 text-white"
+        class="disabled:bg-gray-300 disabled:cursor-not-allowed p-2 px-3 rounded bg-green-800 text-white"
       >
-        {{ $route.name == "edit_pizza" ? "Salva" : "Crea" }}
+        {{ $route.name == "edit_land" ? "Salva" : "Crea" }}
       </button>
     </div>
   </div>
@@ -58,13 +57,13 @@
 import axios from "axios";
 
 export default {
-  name: "CreatePizza",
+  name: "CreateLand",
   data() {
     return {
       fields: [
         {
-          label: "Nome",
-          code: "name",
+          label: "Comune",
+          code: "common",
           type: "text",
         },
         {
@@ -73,68 +72,130 @@ export default {
           type: "text",
         },
         {
-          label: "Prezzo",
-          code: "price",
+          label: "Dimensioni (ettari)",
+          code: "dimension",
           type: "number",
         },
         {
-          label: "Impasto",
-          code: "dough",
+          label: "Foglio Catastale",
+          code: "sheet",
+          type: "text",
+        },
+        {
+          label: "Mappa Catastale",
+          code: "map",
+          type: "text",
+        },
+        {
+          label: "Parcella Catastale",
+          code: "parcel",
+          type: "text",
+        },
+        {
+          label: "Tipologia Terreno",
+          code: "type",
           type: "select",
           options: [
             {
-              label: "Tradizionale",
-              code: "traditional",
+              label: "Argilloso",
+              code: "clay",
             },
             {
-              label: "Farina di Kamut",
-              code: "kamut",
+              label: "Sabbioso",
+              code: "sand",
             },
             {
-              label: "Alga spirulina",
-              code: "spirulina",
+              label: "Ghiaioso",
+              code: "gravel",
             },
             {
-              label: "Senza glutine",
-              code: "gluten_free",
+              label: "Tufo",
+              code: "tuff",
             },
           ],
         },
         {
-          label: "Allergeni",
-          code: "allergens",
-          type: "text",
+          label: "Tipologia Irrigazione",
+          code: "irrigation",
+          type: "select",
+          options: [
+            {
+              label: "Scorrimento",
+              code: "flow",
+            },
+            {
+              label: "Pozzo",
+              code: "well",
+            },
+            {
+              label: "Canale",
+              code: "canal",
+            },
+            {
+              label: "Senz'acqua",
+              code: "no_water",
+            },
+          ],
         },
         {
-          label: "Descrizione",
-          code: "description",
-          type: "textarea",
+          label: "Offerta",
+          code: "offer",
+          type: "select",
+          options: [
+            {
+              label: "Vendita",
+              code: "sale",
+            },
+            {
+              label: "Affitto",
+              code: "rent",
+            },
+            {
+              label: "Affitto Gratuito",
+              code: "free_rent",
+            },
+          ],
+        },
+        {
+          label: "Canone Offerta",
+          code: "price",
+          type: "number",
+        },
+        {
+          label: "Disponibile",
+          code: "available",
+          type: "checkbox",
         },
       ],
-      newPizza: {
-        name: "",
+      newLand: {
+        common: "",
         photo: "",
+        dimension: 0,
+        sheet: "",
+        map: "",
+        parcel: "",
+        type: "clay",
+        irrigation: "flow",
+        offer: "sale",
         price: 0,
-        dough: "traditional",
-        allergens: "",
-        description: "",
+        available: 1,
       },
     };
   },
   async mounted() {
-    if (this.$route.name == "edit_pizza") {
+    if (this.$route.name == "edit_land") {
       let response = await axios.get(
-        "http://localhost:8000/api/pizzas/" + this.$route.params.id
+        "http://localhost:8000/api/lands/" + this.$route.params.id
       );
-      this.newPizza = response.data;
+      this.newLand = response.data;
     }
   },
   methods: {
-    async createPizza() {
-      if (this.$route.name == "edit_pizza") {
+    async createLand() {
+      if (this.$route.name == "edit_land") {
         let response = await axios.put(
-          "http://localhost:8000/api/pizzas/" + this.$route.params.id,
-          this.newPizza
+          "http://localhost:8000/api/lands/" + this.$route.params.id,
+          this.newLand
         );
 
         if (response.status == 200) {
@@ -142,8 +203,8 @@ export default {
         }
       } else {
         let response = await axios.post(
-          "http://localhost:8000/api/pizzas",
-          this.newPizza
+          "http://localhost:8000/api/lands",
+          this.newLand
         );
 
         if (response.status == 201) {
@@ -155,12 +216,16 @@ export default {
   computed: {
     formIsValid() {
       return (
-        this.newPizza.name != "" &&
-        this.newPizza.photo != "" &&
-        this.newPizza.price > 0 &&
-        this.newPizza.dough != "" &&
-        this.newPizza.allergens != "" &&
-        this.newPizza.description != ""
+        this.newLand.common != "" &&
+        this.newLand.photo != "" &&
+        this.newLand.dimension > 0 &&
+        this.newLand.sheet != "" &&
+        this.newLand.map != "" &&
+        this.newLand.parcel != "" &&
+        this.newLand.type != "" &&
+        this.newLand.irrigation != "" &&
+        this.newLand.offer != "" &&
+        this.newLand.price > 0 
       );
     },
   },

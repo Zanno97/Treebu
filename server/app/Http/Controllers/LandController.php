@@ -28,6 +28,7 @@ class LandController extends Controller
 
         $Land = new Land();
 
+        $Land->common = $LandData->common;
         $Land->photo = $LandData->photo;
         $Land->dimension = $LandData->dimension;
         $Land->sheet = $LandData->sheet;
@@ -50,6 +51,7 @@ class LandController extends Controller
         // Get data from request
         $LandData = json_decode($req->getContent());
 
+        $Land->common = $LandData->common;
         $Land->photo = $LandData->photo;
         $Land->dimension = $LandData->dimension;
         $Land->sheet = $LandData->sheet;

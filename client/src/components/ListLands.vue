@@ -1,61 +1,63 @@
 <template>
-  <div class="w-full max-w-screen-md mx-auto pt-8">
-    <div class="flex items-center mb-5">
-      <div class="ml-auto mr-3">Ordina per prezzo:</div>
-      <span
-        class="rounded-lg p-2 uppercase text-xs mr-2 cursor-pointer"
-        :class="{
-          'bg-red-200 text-red-900': sortMethod == 'asc',
-          'bg-gray-300 text-gray-800': sortMethod != 'asc',
-        }"
-        @click="sort('asc')"
-        >Crescente</span
-      >
-      <span
-        class="rounded-lg p-2 uppercase text-xs cursor-pointer"
-        :class="{
-          'bg-red-200 text-red-900': sortMethod == 'desc',
-          'bg-gray-300 text-gray-800': sortMethod != 'desc',
-        }"
-        @click="sort('desc')"
-        >Decrescente</span
-      >
-    </div>
-    <div class="grid grid-cols-3 gap-x-5 gap-y-5">
-      <div
-        class="bg-gray-200 rounded flex flex-col p-3"
-        v-for="pizza in pizzas"
-        :key="pizza.id"
-      >
-        <div
-          class="h-56 w-full bg-white cursor-pointer"
-          @click="goToDetail(pizza)"
+  <div class="w-full max-w-screen-bg mx-auto px-52 py-4">
+    <div class="bg-lime-100 px-10 py-5 rounded">
+      <div class="flex items-center mb-5">
+        <div class="ml-auto mr-3">Ordina per prezzo:</div>
+        <span
+          class="rounded-lg p-2 uppercase text-xs mr-2 cursor-pointer"
+          :class="{
+            'bg-green-300 text-black': sortMethod == 'asc',
+            'bg-gray-300 text-gray-800 hover:bg-green-100': sortMethod != 'asc',
+          }"
+          @click="sort('asc')"
+          >Crescente</span
         >
-          <img class="w-full h-full" :src="pizza.photo" alt="" />
-        </div>
-        <div class="flex flex-row items-center pt-3">
-          <div class="flex-grow">
-            {{ pizza.name }}
-          </div>
-          <div class="flex">
-            <h2 class="ml-auto text-green-600 font-bold text-xl">
-              {{ pizza.price }} €
-            </h2>
-          </div>
-        </div>
-        <div class="mt-3 ml-auto space-x-3">
-          <button
-            class="text-yellow-600 text-sm font-bold"
-            @click="edit(pizza)"
+        <span
+          class="rounded-lg p-2 uppercase text-xs cursor-pointer"
+          :class="{
+            'bg-green-300 text-black': sortMethod == 'desc',
+            'bg-gray-300 text-gray-800 hover:bg-green-100': sortMethod != 'desc',
+          }"
+          @click="sort('desc')"
+          >Decrescente</span
+        >
+      </div>
+      <div class="grid grid-cols-3 gap-x-5 gap-y-5 bg-lime-100">
+        <div
+          class="bg-gray-200 rounded flex flex-col p-3"
+          v-for="land in lands"
+          :key="land.id"
+        >
+          <div
+            class="h-56 w-full bg-white cursor-pointer"
+            @click="goToDetail(land)"
           >
-            Modifica
-          </button>
-          <button
-            class="text-red-600 text-sm font-bold"
-            @click="deletePizza(pizza)"
-          >
-            Elimina
-          </button>
+            <img class="w-full h-full" :src="land.photo" alt="" />
+          </div>
+          <div class="flex flex-row items-center pt-3">
+            <div class="flex-grow">
+              {{ land.common }}
+            </div>
+            <div class="flex">
+              <h2 class="ml-auto text-green-600 font-bold text-xl">
+                {{ land.price }} €
+              </h2>
+            </div>
+          </div>
+          <div class="mt-3 ml-auto space-x-3">
+            <button
+              class="text-yellow-600 text-sm font-bold hover:text-yellow-900"
+              @click="edit(land)"
+            >
+              Modifica
+            </button>
+            <button
+              class="text-green-600 text-sm font-bold hover:text-green-900"
+              @click="deleteLand(land)"
+            >
+              Elimina
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -65,45 +67,45 @@
 import axios from "axios";
 
 export default {
-  name: "ListPizzas",
+  name: "ListLands",
   data() {
     return {
-      pizzas: [],
+      lands: [],
       sortMethod: "asc",
     };
   },
   async mounted() {
-    await this.getPizzas();
+    await this.getLands();
   },
   methods: {
-    async getPizzas() {
+    async getLands() {
       let response = await axios.get(
-        "http://localhost:8000/api/pizzas?sort=" + this.sortMethod
+        "http://localhost:8000/api/lands?sort=" + this.sortMethod
       );
-      this.pizzas = response.data;
+      this.lands = response.data;
     },
-    edit(pizza) {
-      this.$router.push("/edit/" + pizza.id);
+    edit(land) {
+      this.$router.push("/edit/" + land.id);
     },
-    goToDetail(pizza) {
-      this.$router.push("/view/" + pizza.id);
+    goToDetail(land) {
+      this.$router.push("/view/" + land.id);
     },
-    async deletePizza(pizza) {
+    async deleteLand(land) {
       if (
         confirm(
-          "Vuoi davvero eliminare la pizza: " + pizza.name + "?",
+          "Vuoi davvero eliminare il terreno: " + land.common + "?",
           "Si",
           "No"
         )
       ) {
-        await axios.delete("http://localhost:8000/api/pizzas/" + pizza.id);
-        await this.getPizzas();
+        await axios.delete("http://localhost:8000/api/lands/" + land.id);
+        await this.getLands();
       }
     },
     sort(direction) {
       if (this.sortMethod != direction) {
         this.sortMethod = direction;
-        this.getPizzas();
+        this.getLands();
       }
     },
   },

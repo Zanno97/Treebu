@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-import ListPizzas from '@/components/ListPizzas.vue';
-import CreatePizza from '@/components/CreatePizza.vue';
-import ViewPizza from '@/components/ViewPizza.vue';
+import ListLands from '@/components/ListLands.vue';
+import CreateLand from '@/components/CreateLand.vue';
+import ViewLand from '@/components/ViewLand.vue';
 
 import VueRouter from 'vue-router';
 
@@ -12,23 +12,23 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    name: 'list_pizzas',
-    component: ListPizzas
+    name: 'list_lands',
+    component: ListLands
   },
   {
     path: '/create',
-    name: 'create_pizza',
-    component: CreatePizza
+    name: 'create_land',
+    component: CreateLand
   },
   {
     path: '/edit/:id',
-    name: 'edit_pizza',
-    component: CreatePizza
+    name: 'edit_land',
+    component: CreateLand
   },
   {
     path: '/view/:id',
-    name: 'view_pizza',
-    component: ViewPizza
+    name: 'view_land',
+    component: ViewLand
   },
   {
     path: '',
